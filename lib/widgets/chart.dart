@@ -28,22 +28,37 @@ class Chart extends StatelessWidget {
     });
   }
 
+  double get totalspending {
+    return groupedTransactionValues.fold(
+      0.0,
+      (sum, item) => sum + (item['amount'] as double),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 6,
       margin: const EdgeInsets.all(20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: groupedTransactionValues
-            .map(
-              (tx) => ChartBar(
-                label: tx['day'].toString(),
-                spendingAmount: double.parse(tx['amount'].toString()),
-                spendingPercentOfTotal: 1,
-              ),
-            )
-            .toList(),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: groupedTransactionValues
+              .map(
+                (tx) => Flexible(
+                  fit: FlexFit.tight,
+                  child: ChartBar(
+                    label: tx['day'].toString(),
+                    spendingAmount: (tx['amount'] as double),
+                    spendingPercentOfTotal: totalspending == 0.0
+                        ? 0.0
+                        : (tx['amount'] as double) / totalspending,
+                  ),
+                ),
+              )
+              .toList(),
+        ),
       ),
     );
   }

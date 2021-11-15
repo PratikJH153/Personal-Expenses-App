@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Personal Expenses App",
       theme: ThemeData(
+        primarySwatch: Colors.deepPurple,
         colorScheme: ColorScheme.fromSwatch(
           accentColor: Colors.amber,
           primarySwatch: Colors.deepPurple,

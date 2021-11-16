@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
       title: "Personal Expenses App",
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
+        errorColor: Colors.red[400],
         colorScheme: ColorScheme.fromSwatch(
           accentColor: Colors.amber,
           primarySwatch: Colors.deepPurple,
@@ -27,6 +28,9 @@ class MyApp extends StatelessWidget {
                 fontFamily: 'OpenSans',
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
+              ),
+              button: const TextStyle(
+                color: Colors.white,
               ),
             ),
         appBarTheme: const AppBarTheme(
@@ -65,12 +69,16 @@ class _HomePageState extends State<HomePage> {
     ),
   ];
 
-  void _addTransaction(String title, double amount) {
+  void _addTransaction(
+    String title,
+    double amount,
+    DateTime pickedDate,
+  ) {
     final Transaction newTx = Transaction(
       id: DateTime.now().toString(),
       title: title,
       amount: amount,
-      date: DateTime.now(),
+      date: pickedDate,
     );
 
     setState(() {
@@ -85,6 +93,12 @@ class _HomePageState extends State<HomePage> {
         return NewTransaction(_addTransaction);
       },
     );
+  }
+
+  void _deleteTransaction(String id) {
+    setState(() {
+      _transactions.removeWhere((tx) => tx.id == id);
+    });
   }
 
   List<Transaction> get _recentTransactions {
@@ -111,14 +125,12 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Chart(_recentTransactions),
-            TransactionList(_transactions),
-          ],
-        ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Chart(_recentTransactions),
+          TransactionList(_transactions, _deleteTransaction),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _startAddNewTransaction(context),

@@ -10,68 +10,66 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: transactions.isEmpty
-          ? Column(
-              children: [
-                Text(
-                  "No Transactions added yet!",
-                  style: Theme.of(context).textTheme.headline6,
+    return transactions.isEmpty
+        ? Column(
+            children: [
+              Text(
+                "No Transactions added yet!",
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              SizedBox(
+                height: 200,
+                child: Image.asset(
+                  "assets/images/waiting.png",
+                  fit: BoxFit.cover,
                 ),
-                const SizedBox(
-                  height: 20,
+              ),
+            ],
+          )
+        : ListView.builder(
+            itemBuilder: (context, index) {
+              final tx = transactions[index];
+              return Card(
+                elevation: 5,
+                margin: const EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 20,
                 ),
-                SizedBox(
-                  height: 200,
-                  child: Image.asset(
-                    "assets/images/waiting.png",
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ],
-            )
-          : ListView.builder(
-              itemBuilder: (context, index) {
-                final tx = transactions[index];
-                return Card(
-                  elevation: 5,
-                  margin: const EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 20,
-                  ),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      radius: 30,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: FittedBox(
-                          child: Text(
-                            "\$${tx.amount.toStringAsFixed(2)}",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    radius: 30,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: FittedBox(
+                        child: Text(
+                          "\$${tx.amount.toStringAsFixed(2)}",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ),
-                    title: Text(
-                      tx.title,
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                    subtitle: Text(
-                      DateFormat.yMMMd().format(tx.date),
-                    ),
-                    trailing: IconButton(
-                      color: Theme.of(context).errorColor,
-                      icon: const Icon(Icons.delete),
-                      onPressed: () => deleteTx(tx.id),
-                    ),
                   ),
-                );
-              },
-              itemCount: transactions.length,
-            ),
-    );
+                  title: Text(
+                    tx.title,
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  subtitle: Text(
+                    DateFormat.yMMMd().format(tx.date),
+                  ),
+                  trailing: IconButton(
+                    color: Theme.of(context).errorColor,
+                    icon: const Icon(Icons.delete),
+                    onPressed: () => deleteTx(tx.id),
+                  ),
+                ),
+              );
+            },
+            itemCount: transactions.length,
+          );
   }
 }
 

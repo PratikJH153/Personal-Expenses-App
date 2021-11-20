@@ -11,24 +11,26 @@ class TransactionList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return transactions.isEmpty
-        ? Column(
-            children: [
-              Text(
-                "No Transactions added yet!",
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              SizedBox(
-                height: 200,
-                child: Image.asset(
-                  "assets/images/waiting.png",
-                  fit: BoxFit.cover,
+        ? LayoutBuilder(builder: (context, constraints) {
+            return Column(
+              children: [
+                Text(
+                  "No Transactions added yet!",
+                  style: Theme.of(context).textTheme.headline6,
                 ),
-              ),
-            ],
-          )
+                const SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                  height: constraints.maxHeight * 0.6,
+                  child: Image.asset(
+                    "assets/images/waiting.png",
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ],
+            );
+          })
         : ListView.builder(
             itemBuilder: (context, index) {
               final tx = transactions[index];
@@ -60,11 +62,19 @@ class TransactionList extends StatelessWidget {
                   subtitle: Text(
                     DateFormat.yMMMd().format(tx.date),
                   ),
-                  trailing: IconButton(
-                    color: Theme.of(context).errorColor,
-                    icon: const Icon(Icons.delete),
-                    onPressed: () => deleteTx(tx.id),
-                  ),
+                  trailing: MediaQuery.of(context).size.width > 360
+                      ? TextButton.icon(
+                          style: TextButton.styleFrom(
+                              primary: Theme.of(context).errorColor),
+                          onPressed: () => deleteTx(tx.id),
+                          icon: const Icon(Icons.delete),
+                          label: const Text("Delete"),
+                        )
+                      : IconButton(
+                          color: Theme.of(context).errorColor,
+                          icon: const Icon(Icons.delete),
+                          onPressed: () => deleteTx(tx.id),
+                        ),
                 ),
               );
             },

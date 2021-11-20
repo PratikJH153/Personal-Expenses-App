@@ -11,6 +11,8 @@ void main() {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
   ]);
   runApp(const MyApp());
 }
@@ -78,6 +80,8 @@ class _HomePageState extends State<HomePage> {
     ),
   ];
 
+  bool _showChart = false;
+
   void _addTransaction(
     String title,
     double amount,
@@ -122,6 +126,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final _mediaQuery = MediaQuery.of(context);
+    final _isLandscape = _mediaQuery.orientation == Orientation.landscape;
     final appBar = AppBar(
       title: const Text("Personal Expenses"),
       actions: [
@@ -133,26 +139,57 @@ class _HomePageState extends State<HomePage> {
         ),
       ],
     );
+
+    final txListWidget = SizedBox(
+      height: (_mediaQuery.size.height -
+              appBar.preferredSize.height -
+              _mediaQuery.padding.top) *
+          0.7,
+      child: TransactionList(_transactions, _deleteTransaction),
+    );
     return Scaffold(
       appBar: appBar,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(
-              height: (MediaQuery.of(context).size.height -
-                      appBar.preferredSize.height -
-                      MediaQuery.of(context).padding.top) *
-                  0.3,
-              child: Chart(_recentTransactions),
-            ),
-            SizedBox(
-                height: (MediaQuery.of(context).size.height -
-                        appBar.preferredSize.height -
-                        MediaQuery.of(context).padding.top) *
-                    0.7,
-                child: TransactionList(_transactions, _deleteTransaction)),
-          ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (_isLandscape)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Show Chart"),
+                    Switch.adaptive(
+                      onChanged: (val) {
+                        setState(() {
+                          _showChart = val;
+                        });
+                      },
+                      value: _showChart,
+                    ),
+                  ],
+                ),
+              if (!_isLandscape)
+                SizedBox(
+                  height: (_mediaQuery.size.height -
+                          appBar.preferredSize.height -
+                          _mediaQuery.padding.top) *
+                      0.3,
+                  child: Chart(_recentTransactions),
+                ),
+              if (!_isLandscape) txListWidget,
+              if (_isLandscape)
+                _showChart
+                    ? SizedBox(
+                        height: (_mediaQuery.size.height -
+                                appBar.preferredSize.height -
+                                _mediaQuery.padding.top) *
+                            0.7,
+                        child: Chart(_recentTransactions),
+                      )
+                    : txListWidget,
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(

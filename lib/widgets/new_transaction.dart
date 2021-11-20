@@ -11,9 +11,7 @@ class NewTransaction extends StatefulWidget {
 
 class _NewTransactionState extends State<NewTransaction> {
   final TextEditingController _titleController = TextEditingController();
-
   final TextEditingController _amountController = TextEditingController();
-
   DateTime? _selectedDate;
 
   void _submitData() {
@@ -51,56 +49,64 @@ class _NewTransactionState extends State<NewTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 3,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            TextField(
-              controller: _titleController,
-              decoration: const InputDecoration(
-                labelText: "Title",
+    return SingleChildScrollView(
+      child: Card(
+        elevation: 3,
+        child: Padding(
+          padding: EdgeInsets.only(
+            top: 10,
+            left: 10,
+            right: 10,
+            bottom: MediaQuery.of(context).viewInsets.bottom +
+                10, // This returns the height that is occupied by the keyboard when focused.
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              TextField(
+                controller: _titleController,
+                decoration: const InputDecoration(
+                  labelText: "Title",
+                ),
+                onSubmitted: (_) => _submitData(),
               ),
-              onSubmitted: (_) => _submitData(),
-            ),
-            TextField(
-              controller: _amountController,
-              decoration: const InputDecoration(
-                labelText: "Amount",
+              TextField(
+                controller: _amountController,
+                decoration: const InputDecoration(
+                  labelText: "Amount",
+                ),
+                keyboardType: TextInputType.number,
+                onSubmitted: (_) => _submitData(),
               ),
-              keyboardType: TextInputType.number,
-              onSubmitted: (_) => _submitData(),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 10),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      _selectedDate == null
-                          ? "No Date Chosen!"
-                          : "Picked Date: ${DateFormat.yMd().format(_selectedDate!)}",
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: _presentDatePicker,
-                    child: const Text(
-                      "Choose Date",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        _selectedDate == null
+                            ? "No Date Chosen!"
+                            : "Picked Date: ${DateFormat.yMd().format(_selectedDate!)}",
                       ),
                     ),
-                  ),
-                ],
+                    TextButton(
+                      onPressed: _presentDatePicker,
+                      child: const Text(
+                        "Choose Date",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            ElevatedButton(
-              onPressed: _submitData,
-              child: const Text("Add Transaction"),
-            ),
-          ],
+              ElevatedButton(
+                onPressed: _submitData,
+                child: const Text("Add Transaction"),
+              ),
+            ],
+          ),
         ),
       ),
     );
